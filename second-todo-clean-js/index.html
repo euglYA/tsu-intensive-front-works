@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>TODO List</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Imperial+Script&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lobster&family=Manrope:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+CO:wght@100..400&family=Playwrite+FR+Moderne:wght@100..400&family=Playwrite+NL:wght@100..400&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Birthstone&family=DM+Serif+Display:ital@0;1&family=Imperial+Script&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lobster&family=Manrope:wght@200..800&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+CO:wght@100..400&family=Playwrite+FR+Moderne:wght@100..400&family=Playwrite+NL:wght@100..400&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Birthstone&family=DM+Serif+Display:ital@0;1&family=Imperial+Script&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lobster&family=Manrope:wght@200..800&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+CO:wght@100..400&family=Playwrite+FR+Moderne:wght@100..400&family=Playwrite+NL:wght@100..400&family=Poiret+One&family=Quicksand:wght@300..800&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        <header class="header">
+            <p class="header__text">euglYA</p>
+        </header>
+
+        
+        <main>
+            <div class="todo">
+                <h2 class="todo__title">TODO List</h2>
+                <ul class="todo__list" id="todoList"></ul>
+                <div class="todo__input-wrapper">
+                    <input type="text" class="todo__input" id="todoInput" placeholder="Добавьте задачу">
+                    <button class="todo__button" id="addTodoButton">Добавить</button>
+                </div>
+            </div>
+    
+            <script>
+                const addTodoButton = document.getElementById('addTodoButton');
+                const todoInput = document.getElementById('todoInput');
+                const todoList = document.getElementById('todoList');
+
+                function loadTodos() {
+                    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+                    todos.forEach(todo => {
+                        const todoItem = document.createElement('li');
+                        todoItem.classList.add('todo__item');
+                        if (todo.done) {
+                            todoItem.classList.add('todo__item--done');
+                        }
+                        todoItem.innerHTML = `
+                            <span class="todo__text">${todo.text}</span>
+                            <div class="todo__button-panel">
+                                <button class="todo__button--done">✔</button>
+                                <button class="todo__button--remove">❌</button>
+                            </div>
+
+                        `;
+    
+                        const doneButton = todoItem.querySelector('.todo__button--done');
+                        doneButton.addEventListener('click', () => {
+                            todoItem.classList.toggle('todo__item--done');
+                            saveTodos();
+                        });
+    
+                        const removeButton = todoItem.querySelector('.todo__button--remove');
+                        removeButton.addEventListener('click', () => {
+                            todoItem.remove();
+                            saveTodos();
+                        });
+    
+                        todoList.appendChild(todoItem);
+                    });
+                }
+
+                console.log(todoList)
+    
+                function saveTodos() {
+                    const todos = [];
+                    document.querySelectorAll('.todo__item').forEach(item => {
+                        todos.push({
+                            text: item.querySelector('.todo__text').innerText,
+                            done: item.classList.contains('todo__item--done')
+                        });
+                    });
+                    localStorage.setItem('todos', JSON.stringify(todos));
+                }
+    
+                function addTodo() {
+                    const todoText = todoInput.value.trim();
+                    if (todoText === '') return;
+    
+                    const todoItem = document.createElement('li');
+                    todoItem.classList.add('todo__item');
+                    todoItem.innerHTML = `
+                        <span class="todo__text">${todoText}</span>
+                        <button class="todo__button--done">✔</button>
+                        <button class="todo__button--remove">❌</button>
+                    `;
+    
+                    const doneButton = todoItem.querySelector('.todo__button--done');
+                    doneButton.addEventListener('click', () => {
+                        todoItem.classList.toggle('todo__item--done');
+                        saveTodos();
+                    });
+    
+                    const removeButton = todoItem.querySelector('.todo__button--remove');
+                    removeButton.addEventListener('click', () => {
+                        todoItem.remove();
+                        saveTodos();
+                    });
+    
+                    todoList.appendChild(todoItem);
+                    todoInput.value = '';
+                    saveTodos();
+                }
+
+                addTodoButton.addEventListener('click', addTodo);
+
+                todoInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        addTodo();
+                    }
+                });
+                loadTodos();
+            </script>
+        </main>
+
+        <footer class="footer">
+            <p class="footer__text">euglYA for intensive</p>
+        </footer>
+    </body>
+
+</html>
